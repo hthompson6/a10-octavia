@@ -222,7 +222,6 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
                                                             constants.LISTENERS:
                                                                 [listener]})
 
-
         with tf_logging.DynamicLoggingListener(create_listener_tf,
                                                log=LOG):
             create_listener_tf.run()
@@ -315,11 +314,11 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
             constants.TOPOLOGY: topology
         }
 
-        if lb.project_id in self.a10_conf.rack_dict:
+        if lb.project_id in self.rack_dict:
             LOG.info('A10ControllerWorker.create_load_balancer fetched project_id : %s'
                      'from config file for Rack Vthunder' % (lb.project_id))
             create_lb_flow = self._lb_flows.get_create_rack_vthunder_load_balancer_flow(
-                     vthunder_conf=self.a10_conf.rack_dict[lb.project_id], topology=topology, listeners=lb.listeners)
+                vthunder_conf=self.rack_dict[lb.project_id], topology=topology, listeners=lb.listeners)
             create_lb_tf = self._taskflow_load(create_lb_flow, store=store)
         else:
             create_lb_flow = self._lb_flows.get_create_load_balancer_flow(
