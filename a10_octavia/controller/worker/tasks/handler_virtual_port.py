@@ -33,7 +33,7 @@ class ListenersParent(object):
             ipinip = json.loads(ipinip.lower())
 
         no_dest_nat = self.readConf('LISTENER', 'no_dest_nat')
-        ha_conn_mirror = self.readConf('LISTENER', 'ha_conn_mirror')
+       ha_conn_mirror = self.readConf('LISTENER', 'ha_conn_mirror')
         if ha_conn_mirror is not None:
             ha_conn_mirror = json.loads(ha_conn_mirror.lower())
         else:

@@ -190,7 +190,7 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
         with tf_logging.DynamicLoggingListener(update_hm_tf,
                                                log=LOG):
             update_hm_tf.run()
-
+  
     def create_listener(self, listener_id):
         """Creates a listener.
 
@@ -381,6 +381,7 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
         # LOG.info("Updating db with this status: %s" % (status))
         # self._octavia_driver_db.update_loadbalancer_status(status)
 
+  
     def update_load_balancer(self, load_balancer_id, load_balancer_updates):
         """Updates a load balancer.
 
@@ -841,8 +842,7 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
             lock_session.commit()
             LOG.info(str(status))
 
- 
-    def failover_amphora(self, vthunder_id):
+    def failover_amphora(self, amphora_id):
         """Perform failover operations for an amphora.
         :param amphora_id: ID for amphora to failover
         :returns: None
