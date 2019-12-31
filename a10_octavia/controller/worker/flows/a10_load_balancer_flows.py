@@ -96,7 +96,7 @@ class LoadBalancerFlows(object):
 
         lb_create_flow.add(handler_virtual_server.CreateVitualServerTask(
             requires=(constants.LOADBALANCER_ID, constants.LOADBALANCER,
-                           a10constants.VTHUNDER),
+                      a10constants.VTHUNDER),
             provides=a10constants.STATUS))
         
         if topology == constants.TOPOLOGY_ACTIVE_STANDBY:
