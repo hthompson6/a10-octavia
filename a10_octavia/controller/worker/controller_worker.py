@@ -309,6 +309,7 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
                  constants.LB_CREATE_NORMAL_PRIORITY}
 
         topology = CONF.controller_worker.loadbalancer_topology
+        #network_type = CONF.a10_octavia.network_type 
 
         store[constants.UPDATE_DICT] = {
             constants.TOPOLOGY: topology
