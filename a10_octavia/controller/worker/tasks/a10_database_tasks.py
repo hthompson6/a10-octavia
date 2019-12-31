@@ -61,7 +61,7 @@ class GetVThunderTask(BaseDatabaseTask):
         return vthunder
 
 
-class CreteVthunderEntry(BaseDatabaseTask):
+class CreateVthunderEntry(BaseDatabaseTask):
 
     """ Create VThunder device entry in DB"""
 

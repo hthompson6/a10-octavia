@@ -59,6 +59,7 @@ class ComputeCreate(BaseComputeTask):
 
         :returns: an amphora
         """
+
         ports = ports or []
         #network_ids = CONF.a10_octavia.amp_boot_network_list[:]
         network_ids = []
