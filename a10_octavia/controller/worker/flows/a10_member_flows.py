@@ -296,3 +296,6 @@ class MemberFlows(object):
                                              constants.LISTENERS)))
         return create_member_flow
 
+
+    def get_active_standby_subflow(self):
+        pass
