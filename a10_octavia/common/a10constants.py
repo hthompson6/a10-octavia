@@ -14,7 +14,12 @@
 
 # Flow names
 GET_VTHUNDER_FOR_LB_SUBFLOW = 'octavia-get-vthunder-for-lb-subflow'
-NETWORK_TYPE_HANDLER_SUBFLOW = 'octavia-get-network-type-handler-sublow'
+
+GET_FLAT_NET_SUBFLOW = 'octavia-get-flat-net-subflow'
+GET_VLAN_NET_SUBFLOW = 'octavia-get-vlan-net-subflow'
+
+FLAT_NET_HANDLER_SUBFLOW = 'octavia-get-flat-net-handler-sublow'
+VLAN_NET_HANDLER_SUBFLOW = 'octavia-get-vlan-net-handler-subflow'
 
 # Constant values
 VTHUNDER = 'vthunder'
@@ -24,4 +29,4 @@ BACKUP_VTHUNDER = 'backup_vthunder'
 VRRP_STATUS = 'vrrp_status'
 VTHUNDER_CONFIG='vthunder_config'
 TRUNK = 'trunk'
-PORTS = 'ports'
+PARENTPORT = 'parent_port'
