@@ -135,8 +135,8 @@ class BaseDataModel(object):
 class VThunder(BaseDataModel):
 
     def __init__(self, id=None, vthunder_id=None, amphora_id=None, device_name=None, ip_address=None,
-                 username=None, password=None, axapi_version=None, undercloud=None,
-                 loadbalancer_id=None, project_id=None, compute_id=None,
+                 username=None, password=None, axapi_version=None, undercloud=None, port=None,
+                 protocol=None, loadbalancer_id=None, project_id=None, compute_id=None,
                  topology="STANDALONE", role="MASTER", status="ACTIVE"):
                  
         self.id = id
@@ -147,6 +147,8 @@ class VThunder(BaseDataModel):
         self.username = username
         self.password = password
         self.axapi_version = axapi_version
+        self.port = port
+        self.protocol = protocol
         self.undercloud = undercloud
         self.loadbalancer_id = loadbalancer_id
         self.project_id = project_id
