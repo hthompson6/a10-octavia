@@ -75,6 +75,10 @@ class CreateVthunderEntry(BaseDatabaseTask):
             'DEFAULT', 'DEFAULT_VTHUNDER_PASSWORD').replace('"', '')
         axapi_version = int(
             self.config.get('DEFAULT', 'DEFAULT_AXAPI_VERSION').replace('"', ''))
+        port = int(
+            self.config.get('DEFAULT', 'DEFAULT_VTHUNDER_PORT').replace('"', ''))
+        protocol = self.config.get(
+            'DEFAULT', 'DEFAULT_VTHUNDER_PROTOCOL').replace('"', '')
 
         compute_id = None
         undercloud = True
@@ -101,6 +105,7 @@ class CreateVthunderEntry(BaseDatabaseTask):
             device_name=vthunder_id, username=username,
             password=password, ip_address=amphora.lb_network_ip,
             undercloud=False, axapi_version=axapi_version,
+            port=port, protocol=protocol,
             loadbalancer_id=loadbalancer.id,
             project_id=loadbalancer.project_id,
             compute_id=compute_id,
@@ -219,6 +224,7 @@ class CreateRackVthunderEntry(BaseDatabaseTask):
                                              password=vthunder_config.password,
                                              ip_address=vthunder_config.ip_address,
                                              undercloud=vthunder_config.undercloud,
+                                             port=vthunder_config.port, protocol=vthunder_config.protocol,
                                              loadbalancer_id=loadbalancer.id,
                                              project_id=vthunder_config.project_id,
                                              axapi_version=vthunder_config.axapi_version,
