@@ -60,24 +60,16 @@ class MemberFlows(object):
 
         parent_port = a10_network_tasks.GetParentPort(
             requires=constants.LOADBALANCER,
-            provides=a10constants.PARENTPORT)
+            provides=a10constants.PARENT_PORT)
 
-        fake_port = a10_network_tasks.FakePort(
-            requires=a10constants.PARENTPORT)
+        vlan_subflow = get_vlan_network_handler_subflow()
+        flat_subflow = get_flat_network_handler_subflow()
 
-        create_member_flow.add(parent_port, fake_port)
+        create_member_flow.add(parent_port, vlan_subflow, flat_subflow)
 
         create_member_flow.link(parent_port, fake_port,
                                 decider=self._test_decider)
 
-        create_member_flow.add(a10_network_tasks.CalculateDelta(
-            requires=[constants.LOADBALANCER,
-                      a10constants.PARENTPORT],
-            provides=constants.DELTAS))
-        create_member_flow.add(a10_network_tasks.HandleNetworkDeltas(
-            requires=[constants.DELTAS,
-                      a10constants.PARENTPORT],
-            provides=constants.ADDED_PORTS))
         create_member_flow.add(database_tasks.GetAmphoraeFromLoadbalancer(
             requires=constants.LOADBALANCER,
             provides=constants.AMPHORA))
@@ -307,7 +299,6 @@ class MemberFlows(object):
                                              constants.LISTENERS)))
         return create_member_flow
 
-
     def get_vthunder_interface_subflow_flat(self, vthunder_constant, enable_iface=False):
         vthunder_network_subflow = linear_flow.Flow(a10constants.GET_FLAT_NET_SUBFLOW)
         vthunder_network_subflow.add(vthunder_tasks.AmphoraePostMemberNetworkPlug(
@@ -326,15 +317,22 @@ class MemberFlows(object):
 
     def get_flat_network_handler_subflow(self):
         vthunder_network_handler_subflow = linear_flow.Flow(a10constants.FLAT_NET_HANDLER_SUBFLOW)
-        create_member_flow.add(a10_network_tasks.CalculateDelta(
-            requires=[constants.LOADBALANCER,
-                      a10constants.PARENTPORT],
-            provides=constants.DELTAS))
-        create_member_flow.add(a10_network_tasks.HandleNetworkDeltas(
-            requires=[constants.DELTAS,
-                      a10constants.PARENTPORT],
-            provides=constants.ADDED_PORTS))
-        return vtunder_network_handler_subflow
+        create_member_flow.add(a10_network_tasks.CalculateNICDelta(
+            requires=constants.LOADBALANCER,
+            provides=a10constants.DELTAS))
+        create_member_flow.add(a10_network_tasks.HandleNICDeltas(
+            requires=constants.DELTAS,
+            provides=a10constants.ADDED_NICS))
+        return vthunder_network_handler_subflow
 
     def get_vlan_network_handler_subflow(self):
-        pass
+        vthunder_network_handler_subflow = linear_flow.Flow(a10constants.VLAN_NET_HANDLER_SUBFLOW)
+        create_member_flow.add(a10_network_tasks.CalculatePortDelta(
+            requires=[constants.LOADBALANCER,
+                      a10constants.PARENT_PORT],
+            provides=a10constants.PORT_DELTAS))
+        create_member_flow.add(a10_network_tasks.HandlePortDeltas(
+            requires=[a10constants.PORT_DELTAS,
+                      a10constants.PARENT_PORT],
+            provides=constants.ADDED_PORTS))
+        return vthunder_network_handler_subflow
