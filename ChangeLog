@@ -1,6 +1,17 @@
 CHANGES
 =======
 
+* Added ip addr assignment vlan bridge
+* Fixed syntax error
+* Included appending of segment section to neutron.conf
+* Added HOST\_IP to demo script
+* Added subnet creationg to demo script
+* Updated demo script
+* Updated demo script
+* Updated demo script
+* Added quick script to setup ovs bridge
+* Implemented subport calculation
+* Adjusted script file name
 * Modified NIC/Port subflows and tasks
 * Leveraged inheritance from aap driver
 * Added targetflow link
