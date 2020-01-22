@@ -830,7 +830,7 @@ class A10ControllerWorker(base_taskflow.BaseTaskFlowEngine):
             lock_session.commit()
             LOG.info(str(status))
 
-    def failover_amphora(self, amphora_id):
+    def failover_amphora(self, vthunder_id):
         """Perform failover operations for an amphora.
         :param amphora_id: ID for amphora to failover
         :returns: None

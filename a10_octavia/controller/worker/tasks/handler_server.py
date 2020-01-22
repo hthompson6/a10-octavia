@@ -60,10 +60,6 @@ class MemberCreate(BaseVThunderTask):
                 server_temp = {}
                 if conf_templates is not None:
                     conf_templates = conf_templates.strip('"')
-<<<<<<< HEAD
-=======
-                    # server_temp = {}
->>>>>>> Added update functions
                     server_temp['template-server'] = conf_templates
             except:
                 server_temp = None
@@ -90,7 +86,6 @@ class MemberDelete(BaseVThunderTask):
             LOG.info("Member de-associated to pool successfully.")
             c.slb.server.delete(member.id)
             LOG.info("Member deleted successfully.")
-<<<<<<< HEAD
         except Exception as e:
             LOG.error(str(e))
             LOG.info("Error occurred")
@@ -142,8 +137,6 @@ class MemberUpdate(BaseVThunderTask):
                                 server_templates=server_temp,
                                 axapi_args=server_args)
             LOG.info("Member updated successfully.")
-=======
->>>>>>> Added update functions
         except Exception as e:
             LOG.error(str(e))
             LOG.info("Error occurred")
