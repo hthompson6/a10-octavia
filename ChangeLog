@@ -1,11 +1,22 @@
 CHANGES
 =======
 
-* Made multiple small fixes
-* Added further QOL update for functional testing
-* QOL update for functional testing
-* Refactored install script
-* Added QOL scripts for testing
+* Various syntax error fixes
+* Added support for netmask on ve
+* Added task to update ve with ip addr
+* Renamed constant for ve interface
+* Associated subnet to fixed ip
+* Added task to associate fixed ips to segment ids
+* Fixed syntax error
+* Added flows for VE interface configuration
+* Added subflow for vlan topology
+* Added task to assign vlan tags and create ve ifaces
+* Temporarily ommitted mac address copying for subport
+* Added vlan task
+* Made child port mac equal parent port mac
+* Added fixed ip support
+* Made fixes so that subports are now associated with trunk
+* Fixed issue arising from left over naming
 * Added network type consideratin to subport creation
 * Added conversion to subport to dict
 * Renamed ChildPort to Subport
@@ -22,6 +33,7 @@ CHANGES
 * Updated demo script
 * Added quick script to setup ovs bridge
 * Implemented subport calculation
+* Adjusted script file name
 * Modified NIC/Port subflows and tasks
 * Leveraged inheritance from aap driver
 * Added targetflow link
@@ -39,7 +51,6 @@ CHANGES
 * Added import back. Added function sig
 * Added ability overwrite of lb status
 * Added database level delete for last resolt
-* Fixed typing issue
 * Updating QOL script
 * Added QOL scripts
 * Established trunk and port association
@@ -47,6 +58,22 @@ CHANGES
 * Made minor fixes
 * Fixed naming typo
 * Made numerous minor fixex
+* Removed further duplication
+* Removed duplication and other issues from rebase
+* Added update functions
+* Added update functions
+* Review comments update 2
+* Review comments inclusion
+* support for rack vThunder devices
+* Added custom network drivers for resolving multi-load-balancer config to vthunder
+* Added minor syntax fix
+* Made minor fixes based upon review feedback
+* Made a number of minor fixes
+* Made multiple small fixes
+* Added further QOL update for functional testing
+* QOL update for functional testing
+* Refactored install script
+* Added QOL scripts for testing
 * Removed another change from rebase
 * Removed further unintended changes from rebase
 * Removed more intendation issues leftover from rebase
@@ -58,7 +85,6 @@ CHANGES
 * Rack device code review 3
 * Added update functions
 * Review comments update 2
-* Adding VRRP synch correctin part
 * Review comments inclusion
 * support for rack vThunder devices
 * updated comments on file
