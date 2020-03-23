@@ -28,7 +28,7 @@ LOG = logging.getLogger(__name__)
 
 class ListenersParent(object):
 
-    def set(self, set_method, loadbalancer, listeners, vthunder):
+    def set(self, set_method, loadbalancer, listeners, cert, vthunder):
         ipinip = CONF.listener.ipinip
         no_dest_nat = CONF.listener.no_dest_nat
         autosnat = CONF.listener.autosnat
@@ -44,19 +44,19 @@ class ListenersParent(object):
             for listener in listeners:
                 if listener.connection_limit != -1:
                     conn_limit = listener.connection_limit
-                if conn_limit < 1 or conn_limit > 8000000:
+                if conn_limit < 1 or conn_limit > 64000000:
                     LOG.warning("The specified member server connection limit " +
                                 "(configuration setting: conn-limit) is out of " +
                                 "bounds with value {0}. Please set to between " +
-                                "1-8000000. Defaulting to 8000000".format(conn_limit))
+                                "1-64000000. Defaulting to 64000000".format(conn_limit))
                 listener.load_balancer = loadbalancer
                 if not listener.enabled:
                     status = c.slb.DOWN
                 c_pers, s_pers = utils.get_sess_pers_templates(listener.default_pool)
                 if listener.protocol == "TERMINATED_HTTPS":
                     listener.protocol = 'HTTPS'
-                    template_args["template_client_ssl"] = self.cert_handler(
-                        loadbalancer, listener, vthunder)
+                    # Test a to_dict on this
+                    template_args["template_client_ssl"] = cert.template_ssl 
 
                 if listener.protocol.lower() == 'http':
                     # TODO(hthompson6) work around for issue in acos client
@@ -88,55 +88,6 @@ class ListenersParent(object):
             LOG.error(str(e))
             LOG.info("Error occurred")
 
-    def cert_handler(self, loadbalancer, listener, vthunder):
-        """ function to handle certs """
-        cert_data = dict()
-        bauth = BarbicanACLAuth()
-        client = bauth.get_barbican_client(loadbalancer.project_id)
-        container = client.containers.get(container_ref=listener.tls_certificate_id)
-
-        cert_data["cert_content"] = container.certificate.payload
-        cert_data["key_content"] = container.private_key.payload
-        cert_data["key_pass"] = container.private_key_passphrase
-        cert_data["template_name"] = listener.id
-        cert_data["cert_filename"] = container.certificate.name
-        cert_data["key_filename"] = container.private_key.name
-
-        c = self.client_factory(vthunder)
-
-        try:
-            c.file.ssl_cert.create(file=cert_data["cert_filename"],
-                                   cert=cert_data["cert_content"],
-                                   size=len(cert_data["cert_content"]),
-                                   action="import", certificate_type="pem")
-        except acos_errors.Exists:
-            c.file.ssl_cert.update(file=cert_data["cert_filename"],
-                                   cert=cert_data["cert_content"],
-                                   size=len(cert_data["cert_content"]),
-                                   action="import", certificate_type="pem")
-        try:
-            c.file.ssl_key.create(file=cert_data["key_filename"],
-                                  cert=cert_data["key_content"],
-                                  size=len(cert_data["key_content"]),
-                                  action="import")
-        except acos_errors.Exists:
-            c.file.ssl_key.update(file=cert_data["key_filename"],
-                                  cert=cert_data["key_content"],
-                                  size=len(cert_data["key_content"]),
-                                  action="import")
-        # create template
-        try:
-            c.slb.template.client_ssl.create(cert_data["template_name"],
-                                             cert=cert_data["cert_filename"],
-                                             key=cert_data["key_filename"],
-                                             passphrase=cert_data["key_pass"])
-        except acos_errors.Exists:
-            c.slb.template.client_ssl.update(cert_data["template_name"],
-                                             cert=cert_data["cert_filename"],
-                                             key=cert_data["key_filename"],
-                                             passphrase=cert_data["key_pass"])
-
-        return cert_data["template_name"]
 
 
 class ListenersCreate(ListenersParent, BaseVThunderTask):
