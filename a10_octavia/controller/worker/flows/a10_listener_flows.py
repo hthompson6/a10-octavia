@@ -34,18 +34,18 @@ class ListenerFlows(object):
         """
         create_listener_flow = linear_flow.Flow(constants.CREATE_LISTENER_FLOW)
         create_listener_flow.add(lifecycle_tasks.ListenersToErrorOnRevertTask(
-            requires=[constants.LOADBALANCER, constants.LISTENERS]))
+            requires=[constants.LOADBALANCER, constants.LISTENER]))
         create_listener_flow.add(a10_database_tasks.GetVThunderByLoadBalancer(
             requires=constants.LOADBALANCER,
             provides=a10constants.VTHUNDER))
         create_listener_flow.add(virtual_port_tasks.ListenersCreate(
-            requires=[constants.LOADBALANCER, constants.LISTENERS, a10constants.VTHUNDER]))
+            requires=[constants.LOADBALANCER, constants.LISTENER, a10constants.VTHUNDER]))
         create_listener_flow.add(a10_network_tasks.UpdateVIP(
             requires=constants.LOADBALANCER))
         create_listener_flow.add(database_tasks.
                                  MarkLBAndListenersActiveInDB(
                                      requires=[constants.LOADBALANCER,
-                                               constants.LISTENERS]))
+                                               constants.LISTENER]))
         return create_listener_flow
 
     def get_create_all_listeners_flow(self):
@@ -54,16 +54,16 @@ class ListenerFlows(object):
         :returns: The flow for creating all listeners
         """
         create_all_listeners_flow = linear_flow.Flow(
-            constants.CREATE_LISTENERS_FLOW)
+            constants.CREATE_LISTENER_FLOW)
         create_all_listeners_flow.add(
             database_tasks.GetListenersFromLoadbalancer(
                 requires=constants.LOADBALANCER,
-                provides=constants.LISTENERS))
+                provides=constants.LISTENER))
         create_all_listeners_flow.add(database_tasks.ReloadLoadBalancer(
             requires=constants.LOADBALANCER_ID,
             provides=constants.LOADBALANCER))
         create_all_listeners_flow.add(virtual_port_tasks.ListenersUpdate(
-            requires=[constants.LOADBALANCER, constants.LISTENERS]))
+            requires=[constants.LOADBALANCER, constants.LISTENER]))
         create_all_listeners_flow.add(network_tasks.UpdateVIP(
             requires=constants.LOADBALANCER))
         return create_all_listeners_flow
@@ -144,19 +144,19 @@ class ListenerFlows(object):
         """
         update_listener_flow = linear_flow.Flow(constants.UPDATE_LISTENER_FLOW)
         update_listener_flow.add(lifecycle_tasks.ListenersToErrorOnRevertTask(
-            requires=[constants.LOADBALANCER, constants.LISTENERS]))
+            requires=[constants.LOADBALANCER, constants.LISTENER]))
         update_listener_flow.add(a10_database_tasks.GetVThunderByLoadBalancer(
             requires=constants.LOADBALANCER,
             provides=a10constants.VTHUNDER))
         update_listener_flow.add(virtual_port_tasks.ListenersUpdate(
-            requires=[constants.LOADBALANCER, constants.LISTENERS, a10constants.VTHUNDER]))
+            requires=[constants.LOADBALANCER, constants.LISTENER, a10constants.VTHUNDER]))
 
         update_listener_flow.add(database_tasks.UpdateListenerInDB(
             requires=[constants.LISTENER, constants.UPDATE_DICT]))
         update_listener_flow.add(database_tasks.
                                  MarkLBAndListenersActiveInDB(
                                      requires=[constants.LOADBALANCER,
-                                               constants.LISTENERS]))
+                                               constants.LISTENER]))
 
         return update_listener_flow
 
@@ -167,17 +167,21 @@ class ListenerFlows(object):
         """
         create_listener_flow = linear_flow.Flow(constants.CREATE_LISTENER_FLOW)
         create_listener_flow.add(lifecycle_tasks.ListenersToErrorOnRevertTask(
-            requires=[constants.LOADBALANCER, constants.LISTENERS]))
+            requires=[constants.LOADBALANCER, constants.LISTENER]))
         create_listener_flow.add(a10_database_tasks.GetVThunderByLoadBalancer(
             requires=constants.LOADBALANCER,
             provides=a10constants.VTHUNDER))
         create_listener_flow.add(virtual_port_tasks.ListenersCreate(
-            requires=[constants.LOADBALANCER, constants.LISTENERS, a10constants.VTHUNDER]))
+            requires=[constants.LOADBALANCER, constants.LISTENER, a10constants.VTHUNDER]))
         if project_id is None:
             create_listener_flow.add(network_tasks.UpdateVIP(
                 requires=constants.LOADBALANCER))
         create_listener_flow.add(database_tasks.
                                  MarkLBAndListenersActiveInDB(
                                      requires=[constants.LOADBALANCER,
-                                               constants.LISTENERS]))
+                                               constants.LISTENER]))
         return create_listener_flow
+
+
+    def get_cert_template_create_subflow(self):
+        pass

@@ -26,9 +26,9 @@ CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
-class ListenersParent(object):
+class ListenerParent(object):
 
-    def set(self, set_method, loadbalancer, listeners):
+    def set(self, set_method, loadbalancer, listener):
         ipinip = CONF.listener.ipinip
         no_dest_nat = CONF.listener.no_dest_nat
         autosnat = CONF.listener.autosnat
@@ -38,75 +38,63 @@ class ListenersParent(object):
         virtual_port_templates['template-virtual-port'] = template_virtual_port
 
         template_args = {}
-        for listener in listeners:
-            if listener.connection_limit != -1:
-                conn_limit = listener.connection_limit
-            if conn_limit < 1 or conn_limit > 64000000:
-                LOG.warning("The specified member server connection limit " +
-                            "(configuration setting: conn-limit) is out of " +
-                            "bounds with value {0}. Please set to between " +
-                            "1-64000000. Defaulting to 64000000".format(conn_limit))
-            listener.load_balancer = loadbalancer
-            status = self.axapi_client.slb.UP
-            if not listener.enabled:
-                status = self.axapi_client.slb.DOWN
-            c_pers, s_pers = utils.get_sess_pers_templates(listener.default_pool)
-            if listener.protocol == "TERMINATED_HTTPS":
-                listener.protocol = 'HTTPS'
-                template_args["template_client_ssl"] = listener.id 
+        if listener.connection_limit != -1:
+            conn_limit = listener.connection_limit
 
-            if listener_namner.protocol.lower() == 'http':
-                # TODO(hthompson6) work around for issue in acos client
-                listener.protocol = listener.protocol.lower()
-                virtual_port_template = CONF.listener.template_http
-                virtual_port_templates['template-http'] = virtual_port_template
-            else:
-                virtual_port_template = CONF.listener.template_tcp
-                virtual_port_templates['template-tcp'] = virtual_port_template
+        listener.load_balancer = loadbalancer
+        status = self.axapi_client.slb.UP
+        if not listener.enabled:
+            status = self.axapi_client.slb.DOWN
 
-            virtual_port_template = CONF.listener.template_policy
-            virtual_port_templates['template-policy'] = virtual_port_template
+        c_pers, s_pers = utils.get_sess_pers_templates(listener.default_pool)
+        if listener.protocol == "TERMINATED_HTTPS":
+            listener.protocol = 'HTTPS'
+            template_args["template_client_ssl"] = listener.id 
 
-            name = loadbalancer.id + "_" + str(listener.protocol_port)
-            set_method(loadbalancer.id, name,
-                       listener.protocol,
-                       listener.protocol_port,
-                       listener.default_pool_id,
-                       s_pers_name=s_pers, c_pers_name=c_pers,
-                       status=status, no_dest_nat=no_dest_nat,
-                       autosnat=autosnat, ipinip=ipinip,
-                       # TODO(hthompson6) resolve in acos client
-                       # ha_conn_mirror=ha_conn_mirror,
-                       conn_limit=conn_limit,
-                       virtual_port_templates=virtual_port_templates,
-                       **template_args)
-            LOG.info("Listener created successfully.")
+        if listener_namner.protocol.lower() == 'http':
+            # TODO(hthompson6) work around for issue in acos client
+            listener.protocol = listener.protocol.lower()
+            virtual_port_template = CONF.listener.template_http
+            virtual_port_templates['template-http'] = virtual_port_template
+        else:
+            virtual_port_template = CONF.listener.template_tcp
+            virtual_port_templates['template-tcp'] = virtual_port_template
+
+        virtual_port_template = CONF.listener.template_policy
+        virtual_port_templates['template-policy'] = virtual_port_template
+
+        name = loadbalancer.id + "_" + str(listener.protocol_port)
+        set_method(loadbalancer.id, name,
+                   listener.protocol,
+                   listener.protocol_port,
+                   listener.default_pool_id,
+                   s_pete_namrs_name=s_pers, c_pers_name=c_pers,
+                   status=status, no_dest_nat=no_dest_nat,
+                   autosnat=autosnat, ipinip=ipinip,
+                   # TODO(hthompson6) resolve in acos client
+                   # ha_conn_mirror=ha_conn_mirror,
+                   conn_limit=conn_limit,
+                   virtual_port_templates=virtual_port_templates,
+                   **template_args)
 
 
-class ListenersCreate(ListenersParent, task.Task):
-
+class ListenerCreate(ListenerParent, task.Task):
     """Task to create listener"""
 
     @axapi_client_decorator
-    def execute(self, loadbalancer, listeners, vthunder):
+    def execute(self, loadbalancer, listener, vthunder):
         try:
-            self.set(self.axapi_client.slb.virtual_server.vport.create, loadbalancer, listeners)
+            self.set(self.axapi_client.slb.virtual_server.vport.create, loadbalancer, listener)
         except Exception:
             LOG.exception("Failed to create listeners for loadbalancer: %s", loadbalancer.id)
             raise
 
     def revert(self, loadbalancer, *args, **kwargs):
-        """ Handle failed listeners updates """
         LOG.warning("Reverting listeners updates.")
-
-        for listener in loadbalancer.listeners:
-            self.task_utils.mark_listener_prov_status_error(listener.id)
-
-        return None
+        self.task_utils.mark_listener_prov_status_error(listener.id)
 
 
-class ListenersUpdate(ListenersParent, task.Task):
-
+class ListenerUpdate(ListenerParent, task.Task):
     """Task to update listener"""
 
     @axapi_client_decorator
@@ -114,17 +102,11 @@ class ListenersUpdate(ListenersParent, task.Task):
         self.set(self.axapi_client.slb.virtual_server.vport.update, loadbalancer, listeners)
 
     def revert(self, loadbalancer, *args, **kwargs):
-        """ Handle failed listeners updates """
         LOG.warning("Reverting listeners updates.")
-
-        for listener in loadbalancer.listeners:
-            self.task_utils.mark_listener_prov_status_error(listener.id)
-
-        return None
+        self.task_utils.mark_listener_prov_status_error(listener.id)
 
 
 class ListenerDelete(task.Task):
-
     """Task to delete the listener"""
 
     @axapi_client_decorator
@@ -139,7 +121,5 @@ class ListenerDelete(task.Task):
             LOG.warning("Failed to delete the listener: %s", str(e))
 
     def revert(self, listener, *args, **kwargs):
-        """ Handle a failed listener delete """
         LOG.warning("Reverting listener delete.")
-
         self.task_utils.mark_listener_prov_status_error(listener.id)
