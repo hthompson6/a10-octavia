@@ -97,7 +97,7 @@ class MemberFlows(object):
                                MarkLBAndListenersActiveInDB(
                                    requires=(constants.LOADBALANCER,
                                              constants.LISTENERS)))
-        create_member_flow.add(virtual_server_tasks.WriteMemory(
+        create_member_flow.add(vthunder_tasks.WriteMemory(
             requires=a10constants.VTHUNDER))
         return create_member_flow
 
@@ -148,7 +148,7 @@ class MemberFlows(object):
             provides=a10constants.DELETE_VRID))
         delete_member_flow.add(a10_database_tasks.DeleteVRIDEntry(
             requires=[a10constants.VRID, a10constants.DELETE_VRID]))
-        delete_member_flow.add(virtual_server_tasks.WriteMemory(
+        delete_member_flow.add(vthunder_tasks.WriteMemory(
             requires=a10constants.VTHUNDER))
         return delete_member_flow
 
@@ -193,7 +193,7 @@ class MemberFlows(object):
                                MarkLBAndListenersActiveInDB(
                                    requires=[constants.LOADBALANCER,
                                              constants.LISTENERS]))
-        update_member_flow.add(virtual_server_tasks.WriteMemory(
+        update_member_flow.add(vthunder_tasks.WriteMemory(
             requires=a10constants.VTHUNDER))
         return update_member_flow
 
@@ -283,7 +283,7 @@ class MemberFlows(object):
             database_tasks.MarkLBAndListenersActiveInDB(
                 requires=(constants.LOADBALANCER,
                           constants.LISTENERS)))
-        batch_update_members_flow.add(virtual_server_tasks.WriteMemory(
+        batch_update_members_flow.add(vthunder_tasks.WriteMemory(
             requires=a10constants.VTHUNDER))
         return batch_update_members_flow
 
@@ -325,6 +325,6 @@ class MemberFlows(object):
                                MarkLBAndListenersActiveInDB(
                                    requires=(constants.LOADBALANCER,
                                              constants.LISTENERS)))
-        create_member_flow.add(virtual_server_tasks.WriteMemory(
+        create_member_flow.add(vthunder_tasks.WriteMemory(
             requires=a10constants.VTHUNDER))
         return create_member_flow
