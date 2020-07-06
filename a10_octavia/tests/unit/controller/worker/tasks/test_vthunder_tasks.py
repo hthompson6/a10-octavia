@@ -69,13 +69,6 @@ RACK_DEVICE = {
     "interface_vlan_map": {
         "device_1": {
             "vcs_device_id": 1,
-            "ethernet_interfaces": [{
-                "interface_num": "5",
-                "vlan_map": [
-                    {"vlan_id": 11, "use_dhcp": "True"},
-                    {"vlan_id": 12, "ve_ip": ".10"}
-                ]
-            }]
             "mgmt_ip_address": DEVICE1_MGMT_IP,
             "trunk_interfaces": [TRUNK_INTERFACE]
         }
@@ -90,12 +83,6 @@ RACK_DEVICE_VCS = {
     "interface_vlan_map": {
         "device_1": {
             "vcs_device_id": 1,
-            "trunk_interfaces": [{
-                "interface_num": "1",
-                "vlan_map": [
-                    {"vlan_id": 12, "ve_ip": ".10"}
-                ]
-            }]
             "mgmt_ip_address": DEVICE1_MGMT_IP,
             "ethernet_interfaces": [ETHERNET_INTERFACE]
         },
