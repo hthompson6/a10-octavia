@@ -360,6 +360,7 @@ class HandleACOSPartitionChange(VThunderBaseTask):
             axapi_client = a10_utils.get_axapi_client(vthunder)
             if not axapi_client.system.partition.exists(vthunder.partition_name):
                 axapi_client.system.partition.create(vthunder.partition_name)
+                axapi_client.system.action.write_memory(partition="shared")
                 LOG.info("Partition %s created", vthunder.partition_name)
         except acos_errors.Exists:
             pass
@@ -754,14 +755,13 @@ class WriteMemory(VThunderBaseTask):
 
     @axapi_client_decorator
     def execute(self, vthunder):
-        default_device_id = None
-        if vthunder.project_id in CONF.hardware_thunder.devices:
-            thunder_conf = CONF.hardware_thunder.devices[vthunder.project_id]
-            if len(thunder_conf.device_network_map) > 1:
-                default_device_id = self.axapi_client.system.action.get_vrrp_device_id()
+class WriteMemory(VThunderBaseTask):
 
-        if default_device_id:
-            for device_obj in thunder_conf.device_network_map:
-                self.write_device_mem(vthunder.partition_name, device_obj.vcs_device_id, default_device_id)
+    """Task to write memory of the Thunder device"""
+
+    @axapi_client_decorator
+    def execute(self, vthunder):
+        if vthunder.partition_name:
+            self.axapi_client.system.action.write_memory(partition="specified", specified_partition=vthunder.partition_name)
         else:
-            self.write_device_mem(vthunder.partition_name)
+            self.axapi_client.system.action.write_memory(partition="shared")
