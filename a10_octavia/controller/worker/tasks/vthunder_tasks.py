@@ -752,6 +752,7 @@ class WriteMemory(VThunderBaseTask):
     @axapi_client_decorator
     def execute(self, vthunder):
         if vthunder.partition_name:
-            self.axapi_client.system.action.write_memory(partition="specified", specified_partition=vthunder.partition_name)
+            self.axapi_client.system.action.write_memory(partition="specified",
+                                                         specified_partition=vthunder.partition_name)
         else:
             self.axapi_client.system.action.write_memory(partition="shared")

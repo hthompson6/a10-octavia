@@ -430,4 +430,5 @@ class TestVThunderTasks(base.BaseTaskTestCase):
         mock_task = task.WriteMemory()
         mock_task.axapi_client = self.client_mock
         mock_task.execute(thunder)
-        self.client_mock.system.action.write_memory.assert_called_with(partition='specified', specified_partition='testPartition')
+        self.client_mock.system.action.write_memory.assert_called_with(partition='specified',
+                                                                       specified_partition='testPartition')
