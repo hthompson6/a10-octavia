@@ -126,6 +126,9 @@ class MemberFlows(object):
         delete_member_flow.add(a10_database_tasks.GetVThunderByLoadBalancer(
             requires=constants.LOADBALANCER,
             provides=a10constants.VTHUNDER))
+        delete_member_flow.add(vthunder_tasks.SetupDeviceNetworkMap(
+            requires=a10constants.VTHUNDER,
+            provides=a10constants.VTHUNDER))
         delete_member_flow.add(server_tasks.MemberDelete(
             requires=(constants.MEMBER, a10constants.VTHUNDER, constants.POOL)))
         delete_member_flow.add(database_tasks.DecrementMemberQuota(
@@ -167,6 +170,9 @@ class MemberFlows(object):
             requires=constants.MEMBER))
         update_member_flow.add(a10_database_tasks.GetVThunderByLoadBalancer(
             requires=constants.LOADBALANCER,
+            provides=a10constants.VTHUNDER))
+        update_member_flow.add(vthunder_tasks.SetupDeviceNetworkMap(
+            requires=a10constants.VTHUNDER,
             provides=a10constants.VTHUNDER))
         # Handle VRID settings
         update_member_flow.add(a10_database_tasks.GetVRIDForProjectMember(
@@ -302,6 +308,9 @@ class MemberFlows(object):
             requires=constants.MEMBER))
         create_member_flow.add(a10_database_tasks.GetVThunderByLoadBalancer(
             requires=constants.LOADBALANCER,
+            provides=a10constants.VTHUNDER))
+        create_member_flow.add(vthunder_tasks.SetupDeviceNetworkMap(
+            requires=a10constants.VTHUNDER,
             provides=a10constants.VTHUNDER))
         create_member_flow.add(a10_database_tasks.GetVRIDForProjectMember(
             requires=constants.MEMBER,
