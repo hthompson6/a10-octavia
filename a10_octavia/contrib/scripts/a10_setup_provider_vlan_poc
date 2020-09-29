@@ -3,10 +3,10 @@
 #
 # This script is used for setting up devstack VLAN config with provider VLAN and Openstack 
 # VLAN networks. This scripts sets up three openstack networks 
-# provider-vlan-11 (vlan id:11, subnet:10.0.11.0/24)
-# provider-vlan-12 (vlan id:12, subnet:10.0.12.0/24)
-# provider-vlan-13 (vlan id:13, subnet:10.0.13.0/24)
-# provider-vlan-14 (vlan id:14, subnet:10.0.14.0/24)
+# provider-vlan-111 (vlan id:111, subnet:10.0.111.0/24)
+# provider-vlan-112 (vlan id:112, subnet:10.0.112.0/24)
+# provider-vlan-113 (vlan id:113, subnet:10.0.113.0/24)
+# provider-vlan-114 (vlan id:114, subnet:10.0.114.0/24)
 # with which openstack instances can be launched and communicate with vthunder on provider 
 # network.
 #
@@ -75,11 +75,11 @@ function add_tap_interface {
 }
 
 function setup_host_networking {
-    add_veth_pair veth0 veth1 10.0.0.1
-    add_veth_pair veth2 veth3 10.0.11.1
-    add_veth_pair veth4 veth5 10.0.12.1
-    add_veth_pair veth6 veth7 10.0.13.1
-    add_veth_pair veth8 veth9 10.0.14.1
+    #add_veth_pair veth0 veth1 10.0.0.1
+    add_veth_pair veth2 veth3 10.0.111.1
+    add_veth_pair veth4 veth5 10.0.112.1
+    add_veth_pair veth6 veth7 10.0.113.1
+    add_veth_pair veth8 veth9 10.0.114.1
 
     add_tap_interface tap1
     add_tap_interface tap2
@@ -87,10 +87,10 @@ function setup_host_networking {
     add_tap_interface tap4
 
     pvlan_dhcp_running=$(ps -ef | grep -v grep | grep setup-vlanp-dnsmasq.pid)
-    if [[ -z ${pvlan_dhcp_running} ]]; then
-        echo "[+] Starting DHCP server for management and vlan networks" 
-        sudo dnsmasq --no-hosts --pid-file=/var/run/setup-vlanp-dnsmasq.pid --dhcp-range=interface:vnet0,10.0.0.40,10.0.0.90,72h --dhcp-range=interface:vnet2,10.0.11.40,10.0.11.90,72h --dhcp-range=interface:vnet4,10.0.12.40,10.0.12.90,72h --dhcp-range=interface:vnet6,10.0.13.40,10.0.13.90,72h --dhcp-range=interface:vnet8,10.0.14.40,10.0.14.90,72h --dhcp-option=19,0 --local-service --bind-dynamic --conf-file=
-    fi
+    #if [[ -z ${pvlan_dhcp_running} ]]; then
+        #echo "[+] Starting DHCP server for management and vlan networks" 
+        #sudo dnsmasq --no-hosts --pid-file=/var/run/setup-vlanp-dnsmasq.pid --dhcp-range=interface:vnet0,10.0.0.40,10.0.0.90,72h --dhcp-range=interface:vnet2,10.0.111.40,10.0.111.90,72h --dhcp-range=interface:vnet4,10.0.112.40,10.0.112.90,72h --dhcp-range=interface:vnet6,10.0.113.40,10.0.113.90,72h --dhcp-range=interface:vnet8,10.0.114.40,10.0.114.90,72h --dhcp-option=19,0 --local-service --bind-dynamic --conf-file=
+    #fi
 }
 
 function add_ovs_bridge {
@@ -125,15 +125,15 @@ function setup_host_ovs_bridges {
     add_port_to_bridge br-mgmt veth1 ""
 
     add_ovs_bridge br-vlanp
-    add_port_to_bridge br-vlanp veth3 11
-    add_port_to_bridge br-vlanp veth5 12
-    add_port_to_bridge br-vlanp veth7 13
-    add_port_to_bridge br-vlanp veth9 14
+    add_port_to_bridge br-vlanp veth3 111
+    add_port_to_bridge br-vlanp veth5 112
+    add_port_to_bridge br-vlanp veth7 113
+    add_port_to_bridge br-vlanp veth9 114
 
-    add_port_to_bridge br-vlanp tap1 11
-    add_port_to_bridge br-vlanp tap2 12
-    add_port_to_bridge br-vlanp tap3 13
-    add_port_to_bridge br-vlanp tap4 14
+    add_port_to_bridge br-vlanp tap1 111
+    add_port_to_bridge br-vlanp tap2 112
+    add_port_to_bridge br-vlanp tap3 113
+    add_port_to_bridge br-vlanp tap4 114
 }
 
 function patch_conf_files {
@@ -210,12 +210,12 @@ function create_network {
         sleep 1
     fi
 
-    local snat_rule="POSTROUTING -s ${subnet_range} ! -d ${subnet_range} -j MASQUERADE"
-    exists=$(check_exists "sudo iptables-save -t nat" "${snat_rule}")
-    if [[ ${exists} -ne 1 ]]; then
-        echo "[+] Creating SNAT rule ${snat_rule}"
-        sudo iptables -t nat -A ${snat_rule}
-    fi
+    #local snat_rule="POSTROUTING -s ${subnet_range} ! -d ${subnet_range} -j MASQUERADE"
+    #exists=$(check_exists "sudo iptables-save -t nat" "${snat_rule}")
+    #if [[ ${exists} -ne 1 ]]; then
+    #    echo "[+] Creating SNAT rule ${snat_rule}"
+    #    sudo iptables -t nat -A ${snat_rule}
+    #fi
 }
 
 function setup_provider_vlan {
@@ -227,10 +227,10 @@ function setup_provider_vlan {
     restart_services
     sleep 2
 
-    create_network 11 provider-vlan-11 provider-vlan-11-subnet 10.0.11.0/24 start=10.0.11.100,end=10.0.11.200
-    create_network 12 provider-vlan-12 provider-vlan-12-subnet 10.0.12.0/24 start=10.0.12.100,end=10.0.12.200
-    create_network 13 provider-vlan-13 provider-vlan-13-subnet 10.0.13.0/24 start=10.0.13.100,end=10.0.13.200
-    create_network 14 provider-vlan-14 provider-vlan-14-subnet 10.0.14.0/24 start=10.0.14.100,end=10.0.14.200
+    create_network 111 provider-vlan-111 provider-vlan-111-subnet 10.0.111.0/24 start=10.0.111.100,end=10.0.111.200
+    create_network 112 provider-vlan-112 provider-vlan-112-subnet 10.0.112.0/24 start=10.0.112.100,end=10.0.112.200
+    create_network 113 provider-vlan-113 provider-vlan-113-subnet 10.0.113.0/24 start=10.0.113.100,end=10.0.113.200
+    create_network 114 provider-vlan-114 provider-vlan-114-subnet 10.0.114.0/24 start=10.0.114.100,end=10.0.114.200
 }
 
 function delete_network {
@@ -259,10 +259,10 @@ function delete_network {
 }
 
 function delete_ostack_networks {
-    delete_network provider-vlan-14 provider-vlan-14-subnet 10.0.14.0/24
-    delete_network provider-vlan-13 provider-vlan-13-subnet 10.0.13.0/24
-    delete_network provider-vlan-12 provider-vlan-12-subnet 10.0.12.0/24
-    delete_network provider-vlan-11 provider-vlan-11-subnet 10.0.11.0/24
+    delete_network provider-vlan-114 provider-vlan-114-subnet 10.0.114.0/24
+    delete_network provider-vlan-113 provider-vlan-113-subnet 10.0.113.0/24
+    delete_network provider-vlan-112 provider-vlan-112-subnet 10.0.112.0/24
+    delete_network provider-vlan-111 provider-vlan-111-subnet 10.0.111.0/24
 }
 
 function unpatch_conf_files {
