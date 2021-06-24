@@ -107,7 +107,7 @@ def convert_to_hardware_thunder_conf(hardware_list):
                                                ' in [hardware_thunder] section'.format(project_id))
             hierarchical_mt = hardware_device.get('hierarchical_multitenancy')
             if hierarchical_mt == "enable":
-                hardware_device["partition_name"] = project_id[0:14]
+                hardware_device["partition_name"] = project_id[0:13]
             if hierarchical_mt and hierarchical_mt not in ('enable', 'disable'):
                 raise cfg.ConfigFileValueError('Option `hierarchical_multitenancy` specified '
                                                'under project id {} only accepts "enable" and '
