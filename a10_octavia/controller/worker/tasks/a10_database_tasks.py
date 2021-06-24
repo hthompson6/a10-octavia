@@ -122,13 +122,13 @@ class CheckExistingProjectToThunderMappedEntries(BaseDatabaseTask):
     def execute(self, loadbalancer, vthunder_config):
         hierarchical_mt = vthunder_config.hierarchical_multitenancy
         if hierarchical_mt == 'enable':
-            vthunder_config.partition_name = loadbalancer.project_id[:14]
+            vthunder_config.partition_name = loadbalancer.project_id[:13]
             if CONF.a10_global.use_parent_partition:
                 parent_project_id = utils.get_parent_project(
                     vthunder_config.project_id)
                 if parent_project_id:
                     if parent_project_id != 'default':
-                        vthunder_config.partition_name = parent_project_id[:14]
+                        vthunder_config.partition_name = parent_project_id[:13]
                 else:
                     LOG.error(
                         "The parent project for project %s does not exist. ",

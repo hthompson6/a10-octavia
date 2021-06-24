@@ -61,8 +61,8 @@ def validate_partial_ipv4(address):
 
 def validate_partition(hardware_device):
     partition_name = hardware_device.get('partition_name', '')
-    if len(partition_name) > 14:
-        raise ValueError("Supplied partition value '%s' exceeds maximum length 14" %
+    if len(partition_name) > 13:
+        raise ValueError("Supplied partition value '%s' exceeds maximum length 13" %
                          (partition_name))
 
 

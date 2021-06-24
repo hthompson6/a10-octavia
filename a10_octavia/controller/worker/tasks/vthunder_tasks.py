@@ -1185,7 +1185,7 @@ class GetVthunderConfByFlavor(VThunderBaseTask):
                         raise exceptions.DeviceIsProjectDevice()
                     vthunder_config.project_id = loadbalancer.project_id
                     if vthunder_config.hierarchical_multitenancy == "enable":
-                        vthunder_config.partition_name = loadbalancer.project_id[0:14]
+                        vthunder_config.partition_name = loadbalancer.project_id[0:13]
                     return vthunder_config, True
                 else:
                     raise exceptions.FlavorDeviceNotFound(device_flavor)
