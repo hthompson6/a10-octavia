@@ -197,11 +197,11 @@ class TestA10DatabaseTasks(base.BaseTaskTestCase):
         mock_create_vthunder = task.CreateRackVthunderEntry()
         mock_create_vthunder.vthunder_repo = mock.MagicMock()
         mock_vthunder = copy.deepcopy(VTHUNDER)
-        mock_vthunder.partition_name = a10constants.MOCK_CHILD_PROJECT_ID[:14]
+        mock_vthunder.partition_name = a10constants.MOCK_CHILD_PROJECT_ID[:13]
         mock_create_vthunder.vthunder_repo.create.return_value = mock_vthunder
         vthunder = mock_create_vthunder.execute(mock_lb, mock_vthunder_config)
         self.assertEqual(vthunder.partition_name,
-                         a10constants.MOCK_CHILD_PROJECT_ID[:14])
+                         a10constants.MOCK_CHILD_PROJECT_ID[:13])
 
     def test_get_vrid_for_project_member_hmt_use_partition(self):
         thunder = copy.deepcopy(HW_THUNDER)
