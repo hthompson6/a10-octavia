@@ -1799,7 +1799,7 @@ devices = [
              ]
 ```
 
-When using hierarchical multitenancy (HMT), partitions will be created on the Thunder device with names matching the first 14 characters of the `project_id`. It's important to note that any `partition_name` defined for projects without pre-existing loadbalancers will be ignored.
+When using hierarchical multitenancy (HMT), partitions will be created on the Thunder device with names matching the first 13 characters of the `project_id`. It's important to note that any `partition_name` defined for projects without pre-existing loadbalancers will be ignored.
 
 Now issue the following commands to create each loadbalancer
 ```
